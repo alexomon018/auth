@@ -1,5 +1,4 @@
 import asyncHandler from "express-async-handler";
-import path from "path";
 import { createSession, invalidateSession, users } from "../data/users.js";
 import {
   generateToken,
