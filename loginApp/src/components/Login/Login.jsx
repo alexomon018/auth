@@ -9,11 +9,10 @@ import "antd/dist/antd.css";
 const { Content } = Layout;
 
 const Login = () => {
-  const { loginData, setLoginData } = useGlobalContext();
+  const { setLoginData } = useGlobalContext();
   const navigate = useNavigate();
 
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
     const { password, username } = values;
     axios
       .post(
@@ -29,8 +28,6 @@ const Login = () => {
       })
       .catch((error) => setLoginData(error.message));
   };
-
-  console.log(loginData);
 
   return (
     <Layout>
@@ -79,7 +76,7 @@ const Login = () => {
                 <Checkbox>Remember me</Checkbox>
               </Form.Item>
 
-              <a className="login-form-forgot" href="">
+              <a className="login-form-forgot" href="/forgot-password">
                 Forgot password
               </a>
             </Form.Item>

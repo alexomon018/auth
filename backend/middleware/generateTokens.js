@@ -44,4 +44,9 @@ const generateRefreshToken = (payload, expiresIn) => {
     expiresIn: expiresIn,
   });
 };
-export { generateToken, generateRefreshToken };
+const generateForgotPasswordToken = (payload, secret, expiresIn) => {
+  return jwt.sign({ payload }, secret, {
+    expiresIn: expiresIn,
+  });
+};
+export { generateToken, generateRefreshToken, generateForgotPasswordToken };

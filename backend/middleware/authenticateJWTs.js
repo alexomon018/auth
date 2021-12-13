@@ -29,9 +29,20 @@ const authenticateJWTRefresh = (refreshToken) => {
   } catch (error) {
     return {
       payload: null,
-      expired: error.message.includes("somethings wrong with refresh token"),
+      expired: error.message.includes("jwt expired"),
+    };
+  }
+};
+const authenticateJWTForgotPass = (resetPassToken, secret) => {
+  try {
+    const decoded = jwt.verify(resetPassToken, secret);
+    return { payload: decoded, expired: false };
+  } catch (error) {
+    return {
+      payload: null,
+      expired: error.message.includes("jwt expired"),
     };
   }
 };
 
-export { authenticateJWT, authenticateJWTRefresh };
+export { authenticateJWT, authenticateJWTRefresh, authenticateJWTForgotPass };

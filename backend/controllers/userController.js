@@ -1,8 +1,10 @@
 import asyncHandler from "express-async-handler";
 import { createSession, invalidateSession, users } from "../data/users.js";
+import { authenticateJWTForgotPass } from "../middleware/authenticateJWTs.js";
 import {
   generateToken,
   generateRefreshToken,
+  generateForgotPasswordToken,
 } from "../middleware/generateTokens.js";
 
 //@desc Auth user & get token
@@ -80,4 +82,87 @@ const logoutHandler = asyncHandler(async (req, res) => {
   res.send({ success: true });
 });
 
-export { authUser, logoutHandler, getSessionHandler };
+//@desc Post forgot-password
+//@route Post /users/forgot-password
+//@access Public
+const forgotPasswordHandler = asyncHandler(async (req, res) => {
+  const { username } = req.body;
+
+  const user = users.find((user) => user.username === username) || "no user";
+
+  if (username !== user.username) {
+    return res.json("User not found");
+  }
+
+  const payload = {
+    username: user.username,
+    id: user.id,
+  };
+
+  const secret = `superhashedsecret${user.password}`;
+
+  const token = generateForgotPasswordToken(payload, secret, "1m");
+
+  const link = `http://localhost:3001/reset-password/${token}/${user.id}`;
+
+  res.send(link);
+});
+
+//@desc Get reset-password
+//@route Get /users/reset-password/:id/:token
+//@access Public
+const getResetPasswordHandler = asyncHandler(async (req, res) => {
+  const { id, token } = req.params;
+
+  const user = users.find((user) => user.id === +id);
+
+  if (!user) {
+    return res.send("Invalid id");
+  }
+  const secret = `superhashedsecret${user.password}`;
+  try {
+    const payload = authenticateJWTForgotPass(token, secret);
+    res.send(payload);
+  } catch (error) {
+    console.log(error);
+    res.send(error.message);
+  }
+});
+
+//@desc Post reset-password
+//@route Post /users/reset-password
+//@access Public
+const resetPassHandler = asyncHandler(async (req, res) => {
+  const { id, token } = req.params;
+  const { password, password2 } = req.body;
+
+  const user = users.find((user) => user.id === +id);
+
+  if (!user) {
+    return res.send("Invalid id");
+  }
+  const secret = `superhashedsecret${user.password}`;
+
+  try {
+    const payload = authenticateJWTForgotPass(token, secret);
+
+    if (password !== password2) {
+      return res.send("Passwords do not match");
+    }
+    user.password = password;
+
+    return res.send("Password changed");
+  } catch (error) {
+    console.log("error", error);
+    res.send(error.message);
+  }
+});
+
+export {
+  authUser,
+  logoutHandler,
+  getSessionHandler,
+  forgotPasswordHandler,
+  getResetPasswordHandler,
+  resetPassHandler,
+};

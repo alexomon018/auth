@@ -47,6 +47,9 @@ module.exports = {
       exposes: {
         "./Login": "./src/components/Login/Login.jsx",
         "./Home": "./src/components/Home/Home.jsx",
+        "./ForgotPassword":
+          "./src/components/ForgotPassword/ForgotPassword.jsx",
+        "./ResetPassword": "./src/components/ResetPassword/ResetPassword.jsx",
         "./context": "./src/context.js",
       },
       shared: {
