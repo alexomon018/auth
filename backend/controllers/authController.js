@@ -1,14 +1,19 @@
 import asyncHandler from "express-async-handler";
-import { createSession, invalidateSession, users } from "../data/users.js";
-import { authenticateJWTForgotPass } from "../middleware/authenticateJWTs.js";
+import {
+  authenticateJWTForgotPass,
+  authenticateJWTRefresh,
+} from "../middleware/authenticateJWTs.js";
+import { users } from "../data/users.js";
 import {
   generateToken,
   generateRefreshToken,
   generateForgotPasswordToken,
 } from "../middleware/generateTokens.js";
 
+let refreshTokens = [];
+
 //@desc Auth user & get token
-//@route POST /users/login
+//@route POST /auth/login
 //@access Public
 const authUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
@@ -19,34 +24,24 @@ const authUser = asyncHandler(async (req, res) => {
   const user = users.find((user) => user.username === username);
   try {
     if (user) {
-      //refresh token is going to have a reference to the session
-      const session = createSession(username, user.name);
-
-      // Generate an access token
       const accessToken = generateToken(
         {
           username: user.username,
           name: user.name,
-          sessionId: session.sessionId,
         },
         "15s"
       );
       const refreshToken = generateRefreshToken(
-        { sessionId: session.sessionId },
-        "7d"
+        { username: user.username, name: user.name },
+        "30d"
       );
 
-      res.cookie("accessToken", accessToken, {
-        maxAge: 300000, // 5 minutes
-        httpOnly: true,
-      });
+      refreshTokens.push(refreshToken);
 
-      res.cookie("refreshToken", refreshToken, {
-        maxAge: 2.628e9, // 1 month
-        httpOnly: true,
+      return res.status(200).json({
+        accessToken,
+        refreshToken,
       });
-
-      return res.status(200).send(session);
     } else {
       res.send("Username or password incorrect");
     }
@@ -56,34 +51,40 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 
-//@desc Get current user loggedIn session
-//@route GET /users/login
+//@desc POST to refresh token
+//@route POST /auth/refresh
 //@access Public
-const getSessionHandler = asyncHandler(async (req, res) => {
-  return res.send(req.user);
+const refreshUser = asyncHandler(async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      return res.status(400).send("No token provided please login again");
+    }
+    if (!refreshTokens.includes(refreshToken)) {
+      return res.status(403).send("Invalid operation user is looged out");
+    }
+    const payload = authenticateJWTRefresh(refreshToken);
+
+    const accessToken = generateToken(payload.payload.payload, "1m");
+
+    res.send({ accessToken: accessToken });
+  } catch (error) {
+    next(error);
+  }
 });
 
 //@desc Logout user
-//@route DELETE /users
+//@route DELETE /auth
 //@access Public
-
 const logoutHandler = asyncHandler(async (req, res) => {
-  res.cookie("accessToken", "", {
-    maxAge: 0,
-    httpOnly: true,
-  });
-  res.cookie("refreshToken", "", {
-    maxAge: 0,
-    httpOnly: true,
-  });
-
-  const session = invalidateSession(req.user.payload.sessionId);
-
-  res.send({ success: true });
+  refreshTokens = refreshTokens.filter(
+    (token) => token !== req.body.refreshToken
+  );
+  res.send("Logged out");
 });
 
 //@desc Post forgot-password
-//@route Post /users/forgot-password
+//@route Post /auth/forgot-password
 //@access Public
 const forgotPasswordHandler = asyncHandler(async (req, res) => {
   const { username } = req.body;
@@ -101,7 +102,7 @@ const forgotPasswordHandler = asyncHandler(async (req, res) => {
 
   const secret = `superhashedsecret${user.password}`;
 
-  const token = generateForgotPasswordToken(payload, secret, "1m");
+  const token = generateForgotPasswordToken(payload, secret, "15s");
 
   const link = `http://localhost:3001/reset-password/${token}/${user.id}`;
 
@@ -109,7 +110,7 @@ const forgotPasswordHandler = asyncHandler(async (req, res) => {
 });
 
 //@desc Get reset-password
-//@route Get /users/reset-password/:id/:token
+//@route Get /auth/reset-password/:id/:token
 //@access Public
 const getResetPasswordHandler = asyncHandler(async (req, res) => {
   const { id, token } = req.params;
@@ -130,11 +131,10 @@ const getResetPasswordHandler = asyncHandler(async (req, res) => {
 });
 
 //@desc Post reset-password
-//@route Post /users/reset-password
+//@route Post /auth/reset-password
 //@access Public
 const resetPassHandler = asyncHandler(async (req, res) => {
-  const { id, token } = req.params;
-  const { password, password2 } = req.body;
+  const { password, id, token } = req.body;
 
   const user = users.find((user) => user.id === +id);
 
@@ -146,7 +146,7 @@ const resetPassHandler = asyncHandler(async (req, res) => {
   try {
     const payload = authenticateJWTForgotPass(token, secret);
 
-    if (password !== password2) {
+    if (password !== password) {
       return res.send("Passwords do not match");
     }
     user.password = password;
@@ -161,7 +161,7 @@ const resetPassHandler = asyncHandler(async (req, res) => {
 export {
   authUser,
   logoutHandler,
-  getSessionHandler,
+  refreshUser,
   forgotPasswordHandler,
   getResetPasswordHandler,
   resetPassHandler,

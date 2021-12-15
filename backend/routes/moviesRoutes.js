@@ -1,8 +1,10 @@
 import express from "express";
 import { getMovieById, getMovies } from "../controllers/moviesController.js";
-import { requireUser } from "../middleware/requireUser.js";
+import desirilazeUser from "../middleware/desirilazeUser.js";
 const router = express.Router();
 
-router.get("/", requireUser, getMovies).get("/:id", requireUser, getMovieById);
+router
+  .get("/", desirilazeUser, getMovies)
+  .get("/:id", desirilazeUser, getMovieById);
 
 export default router;

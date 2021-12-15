@@ -12,7 +12,7 @@ const ForgotPassword = () => {
     const { username } = values;
     axios
       .post(
-        `http://localhost:8080/users/forgot-password`,
+        `${process.env.REACT_APP_BASE_URL}/auth/forgot-password`,
         { username },
         {
           withCredentials: true,
@@ -24,7 +24,6 @@ const ForgotPassword = () => {
       .catch((error) => setError(error.message));
   };
   console.log(resetLink);
-  const onFinishFailed = (errorInfo) => {};
 
   if (error) {
     return <div>{error}</div>;

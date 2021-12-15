@@ -12,11 +12,11 @@ const ResetPassword = () => {
   const navigate = useNavigate();
 
   const onFinish = (values) => {
-    const { password, password2 } = values;
+    const { password } = values;
     axios
       .post(
-        `http://localhost:8080/users/reset-password/${id}/${token}`,
-        { password, password2 },
+        `${process.env.REACT_APP_BASE_URL}/auth/reset-password`,
+        { password, id, token },
         {
           withCredentials: true,
         }
@@ -28,11 +28,11 @@ const ResetPassword = () => {
       .catch((error) => setMessage(error.message));
   };
 
-  const onFinishFailed = (errorInfo) => {};
-
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/users/reset-password/${id}/${token}`)
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/auth/reset-password/${id}/${token}`
+      )
       .then((res) => {
         setUser(res.data.payload.payload);
       })

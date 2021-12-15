@@ -1,21 +1,20 @@
 import express from "express";
 import {
   authUser,
-  getSessionHandler,
+  refreshUser,
   logoutHandler,
   forgotPasswordHandler,
   getResetPasswordHandler,
   resetPassHandler,
-} from "../controllers/userController.js";
-import { requireUser } from "../middleware/requireUser.js";
+} from "../controllers/authController.js";
 const router = express.Router();
 
 router
   .post("/login", authUser)
+  .post("/refresh", refreshUser)
   .post("/forgot-password", forgotPasswordHandler)
   .get("/reset-password/:id/:token", getResetPasswordHandler)
-  .post("/reset-password/:id/:token", resetPassHandler)
-  .get("/", requireUser, getSessionHandler)
-  .delete("/", requireUser, logoutHandler);
+  .post("/reset-password", resetPassHandler)
+  .delete("/", logoutHandler);
 
 export default router;

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie";
 import { useGlobalContext } from "../../context";
 const Home = () => {
   const { loginData, setLoginData, setLogoutData } = useGlobalContext();
@@ -8,12 +9,14 @@ const Home = () => {
 
   const handleLogout = async () => {
     axios
-      .delete(`http://localhost:8080/users`, {
+      .delete(`${process.env.REACT_APP_BASE_URL}/auth`, {
         withCredentials: true,
       })
       .then((res) => {
         setLoginData(null);
         setLogoutData(res.data);
+        Cookies.remove("accessToken");
+        Cookies.remove("refreshToken");
         navigate("/");
       })
       .catch((error) => setLogoutData(error.message));

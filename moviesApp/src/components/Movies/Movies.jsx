@@ -1,23 +1,22 @@
 import React, { useState, useEffect } from "react";
 import Movie from "./Movie";
-import axios from "axios";
 import { useGlobalContext } from "loginApp/context";
 import { Link } from "react-router-dom";
 
 const Movies = () => {
   const [movies, setMovies] = useState([]);
 
-  const { loginData } = useGlobalContext();
+  const { loginData, axiosJWT } = useGlobalContext();
 
   useEffect(() => {
     const fetchMovies = async () => {
-      axios
-        .get(`http://localhost:8080/movies`, {
+      axiosJWT
+        .get(`${process.env.REACT_APP_BASE_URL}/movies`, {
           withCredentials: true,
         })
         .then((res) => {
           if (res.data.msg) {
-            set;
+            setMovies(res.data.msg);
           }
           setMovies(res.data.data);
         })

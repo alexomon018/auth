@@ -8,7 +8,7 @@ const Trivia = () => {
   useEffect(() => {
     const fetchSingleMovie = async () => {
       axios
-        .get(`http://localhost:8080/movies/${id}`, {
+        .get(`${process.env.REACT_APP_BASE_URL}/movies/${id}`, {
           withCredentials: true,
         })
         .then((res) => {
