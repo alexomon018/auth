@@ -6,17 +6,25 @@ import { Form, Input, Button, Layout } from "antd";
 import { Content } from "antd/lib/layout/layout";
 
 const ResetPassword = () => {
-  const { id, token } = useParams();
+  const { token } = useParams();
   const [user, setUser] = useState({});
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
+  console.log(
+    `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_RESET_PASS_URL}/${token}`
+  );
+
   const onFinish = (values) => {
-    const { password } = values;
+    const { password, repeatPassword } = values;
+    if (password !== repeatPassword) {
+      setMessage("Passwords do not match");
+      return;
+    }
     axios
       .post(
-        `${process.env.REACT_APP_BASE_URL}/auth/reset-password`,
-        { password, id, token },
+        `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_RESET_PASS_URL}`,
+        { password, token },
         {
           withCredentials: true,
         }
@@ -31,7 +39,7 @@ const ResetPassword = () => {
   useEffect(() => {
     axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/auth/reset-password/${id}/${token}`
+        `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_RESET_PASS_URL}/${token}/`
       )
       .then((res) => {
         setUser(res.data.payload.payload);
@@ -59,7 +67,6 @@ const ResetPassword = () => {
               remember: true,
             }}
             onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
             <h2>Password reset for {user?.username}</h2>
@@ -77,7 +84,7 @@ const ResetPassword = () => {
             </Form.Item>
             <Form.Item
               label="Confirm password"
-              name="password2"
+              name="repeatPassword"
               rules={[
                 {
                   required: true,
@@ -97,6 +104,7 @@ const ResetPassword = () => {
               <Button type="primary" htmlType="submit">
                 Submit
               </Button>
+              {message && <p>{message}</p>}
             </Form.Item>
           </Form>
         </div>

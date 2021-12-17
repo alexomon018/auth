@@ -3,12 +3,13 @@ import {
   authenticateJWTForgotPass,
   authenticateJWTRefresh,
 } from "../middleware/authenticateJWTs.js";
-import { users } from "../data/users.js";
+import jwt_decode from "jwt-decode";
 import {
   generateToken,
   generateRefreshToken,
   generateForgotPasswordToken,
 } from "../middleware/generateTokens.js";
+import { pool } from "../DBs/postgresConnect.js";
 
 let refreshTokens = [];
 
@@ -18,33 +19,32 @@ let refreshTokens = [];
 const authUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
 
-  if (!username || !password) {
-    return res.status(400).send("Please enter all fields");
-  }
-  const user = users.find((user) => user.username === username);
+  const user = await pool.query("SELECT * FROM users WHERE username = $1", [
+    username,
+  ]);
+
   try {
-    if (user) {
-      const accessToken = generateToken(
-        {
-          username: user.username,
-          name: user.name,
-        },
-        "15s"
-      );
-      const refreshToken = generateRefreshToken(
-        { username: user.username, name: user.name },
-        "30d"
-      );
-
-      refreshTokens.push(refreshToken);
-
-      return res.status(200).json({
-        accessToken,
-        refreshToken,
-      });
-    } else {
-      res.send("Username or password incorrect");
+    if (user.rows.length === 0 || user.rows[0].password !== password) {
+      return res.status(401).json({ msg: "Password or username is incorrect" });
     }
+    const accessToken = generateToken(
+      {
+        username: user.rows[0].username,
+        name: user.rows[0].name,
+      },
+      "15s"
+    );
+    const refreshToken = generateRefreshToken(
+      { username: user.username, name: user.name },
+      "30d"
+    );
+
+    refreshTokens.push(refreshToken);
+
+    return res.status(200).json({
+      accessToken,
+      refreshToken,
+    });
   } catch (error) {
     res.status(401);
     throw new Error(error);
@@ -89,38 +89,44 @@ const logoutHandler = asyncHandler(async (req, res) => {
 const forgotPasswordHandler = asyncHandler(async (req, res) => {
   const { username } = req.body;
 
-  const user = users.find((user) => user.username === username) || "no user";
+  const user = await pool.query("SELECT * FROM users WHERE username = $1", [
+    username,
+  ]);
 
-  if (username !== user.username) {
+  if (username !== user.rows[0].username) {
     return res.json("User not found");
   }
 
   const payload = {
-    username: user.username,
-    id: user.id,
+    username: user.rows[0].username,
+    id: user.rows[0].user_id,
   };
 
-  const secret = `superhashedsecret${user.password}`;
+  const secret = `superhashedsecret${user.rows[0].password}`;
 
   const token = generateForgotPasswordToken(payload, secret, "15s");
 
-  const link = `http://localhost:3001/reset-password/${token}/${user.id}`;
+  const link = `http://localhost:3001/reset-password/${token}/`;
 
   res.send(link);
 });
 
 //@desc Get reset-password
-//@route Get /auth/reset-password/:id/:token
+//@route Get /auth/reset-password
 //@access Public
 const getResetPasswordHandler = asyncHandler(async (req, res) => {
-  const { id, token } = req.params;
+  const { token } = req.params;
 
-  const user = users.find((user) => user.id === +id);
+  const decoded = jwt_decode(token);
 
-  if (!user) {
+  const user = await pool.query("SELECT * FROM users WHERE user_id = $1", [
+    +decoded.payload.id,
+  ]);
+
+  if (!user.rows[0]) {
     return res.send("Invalid id");
   }
-  const secret = `superhashedsecret${user.password}`;
+  const secret = `superhashedsecret${user.rows[0].password}`;
   try {
     const payload = authenticateJWTForgotPass(token, secret);
     res.send(payload);
@@ -134,22 +140,26 @@ const getResetPasswordHandler = asyncHandler(async (req, res) => {
 //@route Post /auth/reset-password
 //@access Public
 const resetPassHandler = asyncHandler(async (req, res) => {
-  const { password, id, token } = req.body;
+  const { password, token } = req.body;
 
-  const user = users.find((user) => user.id === +id);
+  const decoded = jwt_decode(token);
 
-  if (!user) {
+  const user = await pool.query("SELECT * FROM users WHERE user_id = $1", [
+    +decoded.payload.id,
+  ]);
+
+  if (!user.rows[0]) {
     return res.send("Invalid id");
   }
-  const secret = `superhashedsecret${user.password}`;
+  const secret = `superhashedsecret${user.rows[0].password}`;
 
   try {
     const payload = authenticateJWTForgotPass(token, secret);
 
-    if (password !== password) {
-      return res.send("Passwords do not match");
-    }
-    user.password = password;
+    const user = await pool.query(
+      "UPDATE users SET password = $1 WHERE user_id = $2",
+      [password, +decoded.payload.id]
+    );
 
     return res.send("Password changed");
   } catch (error) {

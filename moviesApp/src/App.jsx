@@ -27,7 +27,7 @@ const App = () => {
             ></Route>
             <Route
               exact
-              path="/reset-password/:token/:id"
+              path="/reset-password/:token"
               element={<ResetPassword />}
             ></Route>
           </Routes>

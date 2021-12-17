@@ -13,7 +13,7 @@ const AppProvider = ({ children }) => {
   const refreshToken = async () => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/auth/refresh`,
+        `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_REFRESH_TOKEN_URL}`,
         {
           refreshToken: Cookies.get("refreshToken"),
         }

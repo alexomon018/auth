@@ -13,7 +13,7 @@ router
   .post("/login", authUser)
   .post("/refresh", refreshUser)
   .post("/forgot-password", forgotPasswordHandler)
-  .get("/reset-password/:id/:token", getResetPasswordHandler)
+  .get("/reset-password/:token/", getResetPasswordHandler)
   .post("/reset-password", resetPassHandler)
   .delete("/", logoutHandler);
 

@@ -12,7 +12,7 @@ const ForgotPassword = () => {
     const { username } = values;
     axios
       .post(
-        `${process.env.REACT_APP_BASE_URL}/auth/forgot-password`,
+        `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_FORGOT_PASS_URL}`,
         { username },
         {
           withCredentials: true,
@@ -50,7 +50,6 @@ const ForgotPassword = () => {
                 remember: true,
               }}
               onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
               autoComplete="off"
             >
               <h2>Forgot Password</h2>

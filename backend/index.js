@@ -10,6 +10,7 @@ const app = express();
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
 //middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -22,9 +23,16 @@ app.use(
   })
 );
 
-//routes
-app.use("/auth", authRoutes);
-app.use("/movies", moviesRoutes);
-app.get("/", (req, res) => res.send("Go to /users/login to log in"));
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));
+async function init() {
+  //routes
+  app.use("/auth", authRoutes);
+  app.use("/movies", moviesRoutes);
+  app.get("/", async (req, res) => {
+    res.send("go to /auth/signup or /auth/login");
+  });
+
+  const PORT = process.env.PORT || 8080;
+  app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));
+}
+
+init();

@@ -18,7 +18,7 @@ const Login = () => {
     const { password, username } = values;
     axios
       .post(
-        `${process.env.REACT_APP_BASE_URL}/auth/login`,
+        `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_LOGIN_URL}`,
         { username, password },
         {
           withCredentials: true,
