@@ -11,10 +11,6 @@ const ResetPassword = () => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  console.log(
-    `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_RESET_PASS_URL}/${token}`
-  );
-
   const onFinish = (values) => {
     const { password, repeatPassword } = values;
     if (password !== repeatPassword) {
@@ -69,7 +65,10 @@ const ResetPassword = () => {
             onFinish={onFinish}
             autoComplete="off"
           >
-            <h2>Password reset for {user?.username}</h2>
+            <h2>
+              {"Password reset for "}
+              {user?.username}
+            </h2>
             <Form.Item
               label="Password"
               name="password"

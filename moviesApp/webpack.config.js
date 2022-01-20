@@ -1,11 +1,14 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 const Dotenv = require("dotenv-webpack");
-
 const deps = require("./package.json").dependencies;
-module.exports = {
+
+module.exports = (_, argv) => ({
   output: {
-    publicPath: "http://localhost:3000/",
+    publicPath:
+      argv.mode === "development"
+        ? "http://localhost:3000/"
+        : "http://3.89.228.148:3000/",
   },
 
   resolve: {
@@ -13,6 +16,7 @@ module.exports = {
   },
 
   devServer: {
+    host: argv.mode === "development" ? "localhost" : "0.0.0.0",
     port: 3000,
     historyApiFallback: true,
   },
@@ -45,7 +49,7 @@ module.exports = {
       name: "moviesApp",
       filename: "remoteEntry.js",
       remotes: {
-        loginApp: "loginApp@http://localhost:3001/remoteEntry.js",
+        loginApp: "loginApp@http://3.89.228.148:3001/remoteEntry.js",
       },
       exposes: {},
       shared: {
@@ -64,8 +68,11 @@ module.exports = {
       template: "./src/index.html",
     }),
     new Dotenv({
-      path: "./.env",
-      safe: true, // load .env.example (defaults to "false" which does not use dotenv-safe)
+      path:
+        argv.mode === "development"
+          ? "./.env.development"
+          : "./.env.production",
+      safe: true,
     }),
   ],
-};
+});

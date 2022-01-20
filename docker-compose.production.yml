@@ -1,0 +1,63 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:14.0
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_DB=postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - ./sql/fill_tables.sql:/docker-entrypoint-initdb.d/fill_tables.sql
+    ports:
+      - "5432:5432"
+    container_name: my-postgres
+    restart: always
+
+  mongo_db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_db:/data/db
+    container_name: mongo_db
+    restart: always
+
+  loginfrontend:
+    image: mojdockerbre/auth:auth-loginapp-v1-prod
+    ports:
+      - "3001:80"
+    container_name: auth-loginapp
+    restart: always
+    depends_on:
+      - backend
+
+  moviefrontend:
+    image: mojdockerbre/auth:auth-moviefrontend-v1-prod
+    ports:
+      - "3000:81"
+    container_name: auth-movieapp
+    restart: always
+    depends_on:
+      - backend
+
+  backend:
+    image: mojdockerbre/auth:auth-backend-v1
+    container_name: auth-backend
+    ports:
+      - "8080:8080"
+    env_file: .env
+    environment:
+      - PORT=8080
+      - MONGODB_URI=mongodb://mongo_db:27017
+      - DB_NAME=auth
+      - NAME=a-miticvega
+    depends_on:
+      - db
+      - mongo_db
+    restart: always
+
+volumes:
+  pgdata: {}
+  mongo_db: {}

@@ -1,43 +1,27 @@
 import React from "react";
-import axios from "axios";
 import { useGlobalContext } from "../../context";
-import jwt_decode from "jwt-decode";
-import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, Checkbox, Layout } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import Cookies from "js-cookie";
 import "antd/dist/antd.css";
 
 const { Content } = Layout;
 
 const Login = () => {
-  const { setLoginData } = useGlobalContext();
-  const navigate = useNavigate();
+  const { handleLogin } = useGlobalContext();
 
   const onFinish = (values) => {
     const { password, username } = values;
-    axios
-      .post(
-        `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_LOGIN_URL}`,
-        { username, password },
-        {
-          withCredentials: true,
-        }
-      )
-      .then((res) => {
-        const { accessToken, refreshToken } = res.data;
-        Cookies.set("accessToken", accessToken);
-        Cookies.set("refreshToken", refreshToken);
-        setLoginData(jwt_decode(accessToken).payload);
-        navigate("/movies");
-      })
-      .catch((error) => setLoginData(error.message));
+    handleLogin(username, password);
   };
 
   return (
     <Layout>
       <Content
-        style={{ display: "flex", justifyContent: "center", height: "100vh" }}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          height: "100vh",
+        }}
       >
         <div
           style={{
@@ -94,7 +78,6 @@ const Login = () => {
               >
                 Log in
               </Button>
-              Or <a href="">register now!</a>
             </Form.Item>
           </Form>
         </div>

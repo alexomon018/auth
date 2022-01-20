@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const Movies = () => {
   const [movies, setMovies] = useState([]);
 
-  const { loginData, axiosJWT } = useGlobalContext();
+  const { userData, axiosJWT } = useGlobalContext();
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -30,11 +30,11 @@ const Movies = () => {
 
   return (
     <section className="cards">
-      {loginData ? (
+      {userData ? (
         movies?.map((movie) => <Movie key={movie.id} movie={movie}></Movie>)
       ) : (
         <div>
-          You have to be logged in to see the movies{" "}
+          {"You have to be logged in."}
           <Link to="/login">Log in</Link>
         </div>
       )}

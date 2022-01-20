@@ -5,8 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon backend/index",
-    "server": "nodemon backend/index",
+    "dev": "nodemon backend/index",
+    "start": "node backend/index",
     "client": "npm start --prefix frontend"
   },
   "author": "Aleksa Mitic",
@@ -18,9 +18,13 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-async-handler": "^1.2.0",
+    "express-useragent": "^1.0.15",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^3.1.2",
+    "mongoose": "^6.1.3",
     "nodemon": "^2.0.15",
-    "pg": "^8.7.1"
+    "pg": "^8.7.1",
+    "uniqid": "^5.4.0",
+    "uuid": "^8.3.2"
   }
 }

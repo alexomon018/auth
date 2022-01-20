@@ -3,9 +3,12 @@ const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPl
 const Dotenv = require("dotenv-webpack");
 const deps = require("./package.json").dependencies;
 
-module.exports = {
+module.exports = (_, argv) => ({
   output: {
-    publicPath: "http://localhost:3001/",
+    publicPath:
+      argv.mode === "development"
+        ? "http://localhost:3001/"
+        : "http://3.89.228.148:3001/",
   },
 
   resolve: {
@@ -13,6 +16,7 @@ module.exports = {
   },
 
   devServer: {
+    host: argv.mode === "development" ? "localhost" : "0.0.0.0",
     port: 3001,
     historyApiFallback: true,
   },
@@ -69,8 +73,11 @@ module.exports = {
       template: "./src/index.html",
     }),
     new Dotenv({
-      path: "./.env",
+      path:
+        argv.mode === "development"
+          ? "./.env.development"
+          : "./.env.production",
       safe: true, // load .env.example (defaults to "false" which does not use dotenv-safe)
     }),
   ],
-};
+});

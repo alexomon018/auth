@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-
+import { JWTManager } from "./revokeJWTs.js";
 const publicKey = `-----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC0tv6ptuEJ/l3afd8Zedukagy6
 LZNuC7dcUKi6DD6f3Q8jGMpukd/nVLWiQHikIlmS9lSSzCHB9IRqC9h8UI0/fs8y
@@ -25,6 +25,14 @@ const authenticateJWT = (token) => {
 const authenticateJWTRefresh = (refreshToken) => {
   try {
     const decoded = jwt.verify(refreshToken, publicKeyRefresh);
+
+    if (!JWTManager.isValid(decoded)) {
+      return {
+        payload: null,
+        revoked: true,
+      };
+    }
+
     return { payload: decoded, expired: false };
   } catch (error) {
     return {

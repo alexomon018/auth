@@ -43,7 +43,7 @@ const ForgotPassword = () => {
           }}
         >
           {resetLink.length > 0 ? (
-            <p>Password link was sent to your email</p>
+            <p>{"Password link was sent to your email"}</p>
           ) : (
             <Form
               initialValues={{
@@ -52,7 +52,7 @@ const ForgotPassword = () => {
               onFinish={onFinish}
               autoComplete="off"
             >
-              <h2>Forgot Password</h2>
+              <h2>{"Forgot Password"}</h2>
               <Form.Item
                 label="Username"
                 name="username"

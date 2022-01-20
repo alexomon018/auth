@@ -17,9 +17,7 @@ a {
 }
 
 .container {
-  max-width: 1100px;
   margin: auto;
-  padding: 0 20px;
 }
 
 .btn {
@@ -53,17 +51,17 @@ header img {
 
 input[type="text"] {
   display: block;
-  padding: 10px;
-  font-size: 20px;
   border: 0;
   border-radius: 5px;
-  width: 60%;
   margin: auto;
   outline: none;
 }
 
 .cards {
   display: grid;
+  max-width: 1100px;
+  margin: auto;
+  padding: 0 20px;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
 }

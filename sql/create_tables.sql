@@ -1,0 +1,11 @@
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+  user_id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  username VARCHAR ( 50 ) UNIQUE NOT NULL,
+  password VARCHAR ( 50 )  NOT NULL,
+  name VARCHAR ( 100 ) NOT NULL,
+  last_login TIMESTAMP,
+  created_on TIMESTAMP NOT NULL
+);
+

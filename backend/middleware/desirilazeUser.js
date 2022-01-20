@@ -13,9 +13,9 @@ function desirilazeUser(req, res, next) {
     return res.send("Token expired");
   }
 
-  //validate the token
   if (payload && !expired) {
     req.user = payload;
+
     return next();
   }
 

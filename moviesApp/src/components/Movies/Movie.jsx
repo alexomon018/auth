@@ -11,10 +11,10 @@ const Movie = ({ movie }) => {
           <h1>{movie.name}</h1>
           <ul>
             <li>
-              <strong>Movie Name:</strong> {movie.name}
+              <strong>{"Movie Name:"}</strong> {movie.name}
             </li>
             <li>
-              <strong>Description:</strong> {movie.description}
+              <strong>{"Description:"}</strong> {movie.description}
             </li>
           </ul>
         </div>

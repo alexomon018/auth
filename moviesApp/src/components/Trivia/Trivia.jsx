@@ -27,7 +27,7 @@ const Trivia = () => {
 
   return (
     <div>
-      <h1>Trivia</h1>
+      <h1>{"Trivia"}</h1>
       <div>{movie.longDescription}</div>
     </div>
   );
