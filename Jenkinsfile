@@ -5,7 +5,6 @@ pipeline{
 	environment {
 		DOCKERHUB_CREDENTIALS=credentials('mojdockerbre')
 	}
-
 	stages {
 
 		stage('Build Backend') {
@@ -14,12 +13,14 @@ pipeline{
 				sh 'docker buildx build -f dockerfile.prod --platform=linux/amd64  -t  mojdockerbre/auth:auth-backend-v1 .',
 			}
 		}
+
 		stage('Build LoginApp') {
 
 			steps {
 				sh 'docker buildx build -f dockerfile.prod --platform=linux/amd64  -t  mojdockerbre/auth:auth-loginapp-v1-prod .',
 			}
 		}
+
 		stage('Build MovieApp') {
 
 			steps {
@@ -40,12 +41,14 @@ pipeline{
 				sh 'docker push mojdockerbre/auth:auth-backend-v1'
 			}
 		}
+
 		stage('Push LoginApp') {
 
 			steps {
 				sh 'docker push mojdockerbre/auth:auth-loginapp-v1-prod'
 			}
 		}
+        
 		stage('Push MovieApp') {
 
 			steps {
@@ -53,11 +56,4 @@ pipeline{
 			}
 		}
 	}
-
-	post {
-		always {
-			sh 'docker logout'
-		}
-	}
-
 }
