@@ -19,7 +19,7 @@ pipeline {
     stage('Building image') {
       steps{
         script {
-          dockerImage = docker.build registry
+          dockerImage = docker.build("auth:auth-loginapp-v1-prod", "--platform=linux/amd64 -f ./loginApp/Dockerfile.prod .") registry
         }
       }
     }
