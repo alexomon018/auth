@@ -5,8 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "buildlogin": "npm run build --prefix loginApp",
-    "buildmovie": "npm run build --prefix movieApp",
+    "buildlogin:production": "npm run build --prefix loginApp",
+    "buildmovie:production": "npm run build --prefix movieApp",
     "dev": "nodemon backend/index",
     "start": "node backend/index",
     "client": "npm start --prefix frontend"

@@ -12,7 +12,7 @@ COPY . .
 
 # EXPOSE 3001
 
-RUN npm run buildmovie
+RUN npm run buildmovie:production
 
 FROM nginx:1.21.5-alpine as prod
 

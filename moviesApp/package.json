@@ -1,8 +1,8 @@
 {
-  "name": "moviesApp",
+  "name": "moviesapp",
   "version": "1.0.0",
   "scripts": {
-    "buildmovie": "webpack --mode production",
+    "buildmovie:production": "webpack --mode production",
     "build:dev": "webpack --mode development",
     "prod": "cd dist && PORT=3000 npx serve",
     "start": "webpack serve --open --mode development",
