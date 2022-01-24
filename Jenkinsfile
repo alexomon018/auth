@@ -1,4 +1,4 @@
-pipeline{
+pipeline {
 
 	agent any
 
@@ -8,34 +8,32 @@ pipeline{
         registryCredential = "auth-app-tokencina"
     }
     
-    stages{
+    stages {
 
-        stage('Checkout'){
+        stage('Checkout') {
 
-            steps{
+            steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/alexomon018/auth']]])
             }
         }
 
-        stage('Build Docker image'){
+        stage('Build Docker image') {
 
-            steps{
-               script{
+            steps {
+               script {
                    dockerImage = docker.build.registry
                }
             }
         }
 
-        stage("Uploading Docker image"){
+        stage("Uploading Docker image") {
 
-            steps{    
+            steps {    
                script {
                   docker.withRegistry( '', registryCredential ) {
                   dockerImage.push()
-              }
-        }
+                  }
+            }
         }
     }
-    
-	
 }
