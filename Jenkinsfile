@@ -5,7 +5,7 @@ pipeline{
     environment {
         dockerImage = ''
         registry = "mojdockerbre/auth:auth-loginapp-v1-prod"
-        registryCredential = "	auth-app-tokencina"
+        registryCredential = "auth-app-tokencina"
     }
     
     stages{
