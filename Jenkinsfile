@@ -1,40 +1,38 @@
 pipeline {
-
-	agent any
-
+    agent any 
     environment {
-        dockerImage = ''
+        //once you sign up for Docker hub, use that user_id here
         registry = "mojdockerbre/auth:auth-loginapp-v1-prod"
-        registryCredential = "auth-app-tokencina"
+        //- update your credentials ID after creating credentials for connecting to Docker Hub
+        registryCredential = 'auth-app-tokencina'
+        dockerImage = ''
     }
     
     stages {
-
-        stage('Checkout') {
-
+        stage('Cloning Git') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/alexomon018/auth']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/alexomon018/auth']]])       
             }
         }
-
-        stage('Build Docker image') {
-
-            steps {
-               script {
-                   dockerImage = docker.build.registry
-               }
-            }
+    
+    // Building Docker images
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build registry
         }
-
-        stage("Uploading Docker image") {
-
-            steps {    
-               script {
-                  docker.withRegistry( '', registryCredential ) {
-                  dockerImage.push()
-                  }
-               }
-            }
-        }
+      }
     }
+    
+     // Uploading Docker images into Docker Hub
+    stage('Upload Image') {
+     steps{    
+         script {
+            docker.withRegistry( '', registryCredential ) {
+            dockerImage.push()
+            }
+        }
+      }
+    }
+  }
 }
