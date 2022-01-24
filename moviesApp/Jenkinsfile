@@ -22,12 +22,12 @@ pipeline {
     stage('Building image') {
       steps{
         script {
-          dockerImage = docker.build registry
+          dockerImage = docker.build("auth:auth-moviefrontend-v1-prod", "--platform=linux/amd64 -f ./moviesApp/Dockerfile.prod .") registry
         }
       }
     }
     
-     
+
     stage('Upload Image') {
      steps{    
          script {
