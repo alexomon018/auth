@@ -21,11 +21,9 @@ pipeline {
 
     stage('Building image') {
       steps{
-  
-          sh """
-          docker buildx build -f Dockerfile.prod --platform=linux/amd64 -t mojdockerbre/auth:auth-moviefrontend-v1-prod .
-          """
-      
+        script {
+          dockerImage = docker.build registry
+        }
       }
     }
     
