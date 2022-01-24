@@ -2,7 +2,7 @@ pipeline {
     agent any 
     environment {
         //once you sign up for Docker hub, use that user_id here
-        registry = "mojdockerbre/auth:auth-backend-v1"
+        registry = "mojdockerbre/auth:auth-moviefrontend-v1-prod"
         //- update your credentials ID after creating credentials for connecting to Docker Hub
         registryCredential = 'auth-app-tokencina'
         dockerImage = ''
@@ -19,7 +19,7 @@ pipeline {
     stage('Building image') {
       steps{
         script {
-          dockerImage = docker.build("auth:auth-backend-v1", "--platform=linux/amd64 .") registry
+          dockerImage = docker.build("auth:auth-moviefrontend-v1-prod", "--platform=linux/amd64 -f ./moviesApp/Dockerfile.prod .") registry
         }
       }
     }
