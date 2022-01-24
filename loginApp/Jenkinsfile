@@ -20,10 +20,12 @@ pipeline {
     
     stage('Building image') {
       steps{
-        script {
-          // dockerImage = docker.build("auth:auth-loginapp-v1-prod","-f ./loginApp/Dockerfile.prod .") registry
-          sh "docker buildx build -f Dockerfile.prod --platform=linux/amd64 mojdockerbre/auth:auth-loginapp-v1-prod ."
-        }
+        // script {
+        //   dockerImage = docker.build("auth:auth-loginapp-v1-prod","-f ./loginApp/Dockerfile.prod .") registry
+        // }
+          sh """
+          docker buildx build -f Dockerfile.prod --platform=linux/amd64 -t mojdockerbre/auth:auth-loginapp-v1-prod .
+          """
       }
     }
     
