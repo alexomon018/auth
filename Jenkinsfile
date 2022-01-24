@@ -22,7 +22,7 @@ pipeline {
     stage('Building image') {
       steps{
         script {
-          dockerImage = docker.build("auth:auth-backend-v1", "--platform=linux/amd64 .") registry
+          dockerImage = docker.build registry
         }
       }
     }
