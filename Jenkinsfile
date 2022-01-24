@@ -1,28 +1,39 @@
 pipeline{
 
 	agent any
+
+    environment {
+        dockerImage = ''
+        registry = "mojdockerbre/auth:auth-loginapp-v1-prod"
+        registryCredential = "	auth-app-tokencina"
+    }
     
     stages{
 
-        stage('Build'){
+        stage('Checkout'){
 
             steps{
-                echo 'Building...'
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/alexomon018/auth']]])
             }
         }
 
-        stage('Test'){
+        stage('Build Docker image'){
 
             steps{
-                echo 'Testing...'
+               script{
+                   dockerImage = docker.build.registry
+               }
             }
         }
 
-        stage("Deploy"){
+        stage("Uploading Docker image"){
 
-            steps{
-                echo 'Deploying...'
-            }
+            steps{    
+               script {
+                  docker.withRegistry( '', registryCredential ) {
+                  dockerImage.push()
+              }
+        }
         }
     }
     
