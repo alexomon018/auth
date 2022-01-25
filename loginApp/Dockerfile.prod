@@ -2,17 +2,15 @@ FROM node:12 as build
 
 WORKDIR /app
 
-COPY ./package*.json ./
+COPY . .
 
 RUN npm install
 
-COPY . .
+RUN npm run build
 
 # ENV PORT=3001
 
 # EXPOSE 3001
-
-RUN npm run build
 
 FROM nginx:1.21.5-alpine as prod
 
