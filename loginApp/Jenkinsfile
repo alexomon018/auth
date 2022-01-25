@@ -6,18 +6,23 @@ pipeline {
     environment {
       
         registry = "mojdockerbre/auth:auth-loginapp-v1-prod"
-     
         registryCredential = 'auth-app-tokencina'
         dockerImage = ''
     }
     
     stages {
-        stage('Cloning Git') {
-            steps {
+     stage('Cloning Git') {
+           steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/alexomon018/auth']]])       
             }
         }
-    
+
+      stage('build') {
+            steps {
+                 sh 'cd loginApp'
+             }
+       }   
+        
     stage('Building image') {
       steps{
         script {
