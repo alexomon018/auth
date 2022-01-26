@@ -11,8 +11,8 @@ pipeline {
             filename 'Dockerfile.prod'
             dir 'loginApp'
             additionalBuildArgs  '--platform=linux/amd64'
-            registryUrl 'mojdockerbre/auth:auth-loginapp-v1-prod'
-            registryCredentialsId 'auth-app-tokencina'
+            // registryUrl 'mojdockerbre/auth:auth-loginapp-v1-prod'
+            // registryCredentialsId 'auth-app-tokencina'
         }
       }
       when {
@@ -33,8 +33,8 @@ pipeline {
             filename 'Dockerfile.prod'
             dir 'moviesApp'
             additionalBuildArgs  '--platform=linux/amd64'
-            registryUrl 'mojdockerbre/auth:auth-moviefrontend-v1-prod'
-            registryCredentialsId 'auth-app-tokencina'
+            // registryUrl 'mojdockerbre/auth:auth-moviefrontend-v1-prod'
+            // registryCredentialsId 'auth-app-tokencina'
         }
       }
       
