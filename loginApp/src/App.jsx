@@ -15,15 +15,16 @@ function App() {
         <Route exact path="/" element={<Home />}></Route>
         <Route exact path="/login" element={<Login />}></Route>
         <Route exact path="/devices" element={<LoggedDevices />}></Route>
-        <Route
-          exact
-          path="/forgot-password"
-          element={<ForgotPassword />}
-        ></Route>
+
         <Route
           exact
           path="/reset-password/:token"
           element={<ResetPassword />}
+        ></Route>
+        <Route
+          exact
+          path="/forgot-password"
+          element={<ForgotPassword />}
         ></Route>
       </Routes>
     </AppProvider>
