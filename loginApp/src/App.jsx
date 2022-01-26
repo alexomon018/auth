@@ -18,13 +18,13 @@ function App() {
 
         <Route
           exact
-          path="/reset-password/:token"
-          element={<ResetPassword />}
+          path="/forgot-password"
+          element={<ForgotPassword />}
         ></Route>
         <Route
           exact
-          path="/forgot-password"
-          element={<ForgotPassword />}
+          path="/reset-password/:token"
+          element={<ResetPassword />}
         ></Route>
       </Routes>
     </AppProvider>
