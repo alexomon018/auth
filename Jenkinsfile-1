@@ -1,0 +1,46 @@
+pipeline {
+  agent {
+    label 'linux'
+  }
+  stages {
+    stage('Build loginApp') {
+      when {
+        changeset "**/loginApp/*.*"
+        beforeAgent true
+      }
+      steps {
+        dir('loginApp') {
+          sh '''
+           docker buildx build -f Dockerfile.prod --platform=linux/amd64  -t  mojdockerbre/auth:auth-loginapp-v1-prod .
+          '''
+        }
+      }
+    }
+    stage('Build moviesApp') {
+      
+      when {
+        changeset "**/moviesApp/*.*"
+        beforeAgent true
+      }
+      steps {
+        dir ('moviesApp') {
+          sh '''
+           docker buildx build -f Dockerfile.prod --platform=linux/amd64  -t  mojdockerbre/auth:auth-moviefrontend-v1-prod .
+          '''
+        }
+      }
+    }
+    stage('Build backend') {
+     
+      when {
+        changeset "**/backend/*.*"
+        beforeAgent true
+      }
+      steps {
+          sh '''
+           docker buildx build  --platform=linux/amd64  -t  mojdockerbre/auth:auth-backend-v1 .
+          '''
+      }
+    }
+  }
+}

@@ -2,7 +2,6 @@ pipeline {
     agent any 
     
     environment {
-      
         registry = "mojdockerbre/auth:auth-loginapp-v1-prod"
         registryCredential = 'auth-app-tokencina'
         dockerImage = ''
