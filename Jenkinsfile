@@ -1,8 +1,6 @@
 pipeline {
     agent any 
 
-    tools {nodejs "npm"}
-
     environment {
         
         registry = "mojdockerbre/auth:auth-backend-v1"
