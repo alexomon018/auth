@@ -13,7 +13,8 @@ const Home = () => {
         </div>
       ) : (
         <div>
-          {"You are logged in and back on home page as:"} {userData.username}
+          {"You are logged in and back on home page as:"} {userData.username}{" "}
+          {userData.username}
           <Link to="/" onClick={handleLogout}>
             {"Click here to go to logout"}
           </Link>
