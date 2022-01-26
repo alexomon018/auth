@@ -7,7 +7,6 @@ pipeline {
     stage('Build loginApp') {
       when {
         changeset "**/loginApp/*.*"
-        beforeAgent true
       }
       steps {
         dir('loginApp') {
@@ -21,7 +20,6 @@ pipeline {
       
       when {
         changeset "**/moviesApp/*.*"
-        beforeAgent true
       }
       steps {
         dir ('moviesApp') {
@@ -35,7 +33,6 @@ pipeline {
      
       when {
         changeset "**/backend/*.*"
-        beforeAgent true
       }
       steps {
           sh '''
