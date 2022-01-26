@@ -2,7 +2,6 @@ pipeline {
   
   agent any
 
-
   stages {
     stage('Build loginApp') { 
 
@@ -11,12 +10,11 @@ pipeline {
             filename 'Dockerfile.prod'
             dir 'loginApp'
             additionalBuildArgs  '--platform=linux/amd64'
-            // registryUrl 'mojdockerbre/auth:auth-loginapp-v1-prod'
-            // registryCredentialsId 'auth-app-tokencina'
         }
       }
       when {
         changeset "**/loginApp/*.*"
+         beforeAgent true
       }
       steps {
         dir('loginApp') {
@@ -33,13 +31,12 @@ pipeline {
             filename 'Dockerfile.prod'
             dir 'moviesApp'
             additionalBuildArgs  '--platform=linux/amd64'
-            // registryUrl 'mojdockerbre/auth:auth-moviefrontend-v1-prod'
-            // registryCredentialsId 'auth-app-tokencina'
         }
       }
       
       when {
         changeset "**/moviesApp/*.*"
+         beforeAgent true
       }
       steps {
         dir ('moviesApp') {
@@ -53,6 +50,7 @@ pipeline {
      
       when {
         changeset "**/backend/*.*"
+        beforeAgent true
       }
       steps {
           sh '''
