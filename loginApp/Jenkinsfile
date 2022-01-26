@@ -8,19 +8,24 @@ pipeline {
     }
     
     stages {
-     stage('Cloning Git') {
-           steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/alexomon018/auth']]])       
-            }
-        }
+
     
     stage('Building image') {
-      
-      steps{
-        
-        script {
-          dockerImage = docker.build("auth:auth-loginapp-v1-prod", "--platform=linux/amd64 -f ./loginApp/Dockerfile.prod .") registry
+
+        agent { 
+        dockerfile {
+            filename 'Dockerfile.prod'
+            dir 'loginApp'
+            additionalBuildArgs  '--platform=linux/amd64'
+            // registryUrl 'mojdockerbre/auth:auth-loginapp-v1-prod'
+            // registryCredentialsId 'auth-app-tokencina'
         }
+      }
+      
+      steps {
+           sh '''
+            npm --version
+          '''
       }
     }
     
