@@ -4,7 +4,6 @@ pipeline {
     environment {
         
         registry = "mojdockerbre/auth:auth-backend-v1"
-      
         registryCredential = 'auth-app-tokencina'
         dockerImage = ''
     }

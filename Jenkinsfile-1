@@ -4,19 +4,41 @@ pipeline {
 
 
   stages {
-    stage('Build loginApp') {
+    stage('Build loginApp') { 
+
+    agent { 
+        dockerfile {
+            filename 'Dockerfile.prod'
+            dir 'loginApp'
+            label 'auth-loginapp-v1-prod'
+            additionalBuildArgs  '--platform=linux/amd64'
+            registryUrl 'mojdockerbre/auth:auth-loginapp-v1-prod'
+            registryCredentialsId 'b70e4d3d-90b1-43de-a164-21e4cfe44b9b'
+        }
+      }
       when {
         changeset "**/loginApp/*.*"
       }
       steps {
         dir('loginApp') {
           sh '''
-           docker buildx build -f Dockerfile.prod --platform=linux/amd64  -t  mojdockerbre/auth:auth-loginapp-v1-prod .
+            npm --version
           '''
         }
       }
     }
     stage('Build moviesApp') {
+
+    agent { 
+        dockerfile {
+            filename 'Dockerfile.prod'
+            dir 'moviesApp'
+            label 'auth-moviefrontend-v1-prod'
+            additionalBuildArgs  '--platform=linux/amd64'
+            registryUrl 'mojdockerbre/auth:auth-moviefrontend-v1-prod'
+            registryCredentialsId 'b70e4d3d-90b1-43de-a164-21e4cfe44b9b'
+        }
+      }
       
       when {
         changeset "**/moviesApp/*.*"
@@ -24,7 +46,7 @@ pipeline {
       steps {
         dir ('moviesApp') {
           sh '''
-           docker buildx build -f Dockerfile.prod --platform=linux/amd64  -t  mojdockerbre/auth:auth-moviefrontend-v1-prod .
+           npm --version
           '''
         }
       }
